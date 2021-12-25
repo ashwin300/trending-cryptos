@@ -2,11 +2,13 @@ import Twit from 'twit';
 import dotenv from 'dotenv'
 import rp from 'request-promise'
 import fs from 'fs'
+ 
+ 
 export const getData = (req, res) => {
     dotenv.config();
     const cbApi = process.env.cbApi;
 
-
+ 
  
     // const requestOptions = {
     //   method: 'GET',
@@ -29,6 +31,8 @@ export const getData = (req, res) => {
     // }).catch((err) => {
     //   console.log('API call error:', err.message);
     // });
+
+    
     
     var T = new Twit({
         consumer_key:         '...',
