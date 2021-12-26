@@ -1,22 +1,26 @@
 import Twit from 'twit';
-import dotenv from 'dotenv'
-import rp from 'request-promise'
-import fs from 'fs'
+import dotenv from 'dotenv';
+import rp from 'request-promise';
+ 
  
 import fetch from 'node-fetch'; 
 import { readFile } from 'fs/promises';
+import { resolve } from 'path';
+import * as fs from 'fs/promises'
 
 
- 
-export const getData = (req, res) => {
+let output
+let pairsObject
+export const getData = async (req, res) => {
     dotenv.config();
     const cbApi = process.env.cbApi;
 
  
+    
  
     // const requestOptions = {
     //   method: 'GET',
-    //   uri: 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/map',
+    //   uri: 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=5000',
     //   qs: {
  
     //   },
@@ -29,25 +33,51 @@ export const getData = (req, res) => {
     
     // rp(requestOptions).then(response => {
     //   console.log('API call response:', response);
-    //   fs.writeFile('cryptoMap.json',  JSON.stringify(response), (error) => {
+    //   fs.writeFile('cryptoData.json',  JSON.stringify(response), (error) => {
     //       if (error) throw error;
     //   })
     // }).catch((err) => {
     //   console.log('API call error:', err.message);
     // });
+ 
+    await fs.readFile('./cryptoData.json', 'utf8', (err, jsonString) => {
+        if (err) {
+            console.log("File read failed:", err);
+            return Promise.reject(err)
+        }
+ 
+        return resolve(jsonString)
+        
+    }).then(
+        (p) => {
+            pairsObject = JSON.parse(p)
+        } 
+
+    )
+
+   const data = pairsObject.data
+
+
+   output = data.length
+   const symbolMap = new Map()
+   data.sort((a,b) => a.market_cap_dominance - b.market_cap_dominance)
+    for(let i = 0; i < data.length; i++){
+        if(symbolMap.get(data[i]) != undefined){
+            console.log("dupe")
+        }
+        else{ 
+        data[i].mentions = 0
+        symbolMap.set(data[i].symbol, data[i])}
+    }
+    console.log(symbolMap.get('ETH'))
+    
+ 
+         
+    
 
    
     
-    fs.readFile('./cryptoMap.json', 'utf8', (err, jsonString) => {
-        if (err) {
-            console.log("File read failed:", err)
-            return
-        }
-        console.log("Parsing");
-        const pairs = JSON.parse(jsonString);
-        console.log(pairs);
-    })
-    
+ 
 
     var T = new Twit({
         consumer_key:         '...',
@@ -60,11 +90,12 @@ export const getData = (req, res) => {
 
 
     try {
-        console.log("Data")
-        res.send("Working")
+        console.log(output)
+        res.send('working:\n' + output)
         
     } catch (error) {
         
     }
 
 }
+ 
