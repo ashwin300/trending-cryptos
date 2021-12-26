@@ -60,16 +60,26 @@ export const getData = async (req, res) => {
 
    output = data.length
    const symbolMap = new Map()
-   data.sort((a,b) => a.market_cap_dominance - b.market_cap_dominance)
-    for(let i = 0; i < data.length; i++){
-        if(symbolMap.get(data[i]) != undefined){
-            console.log("dupe")
-        }
-        else{ 
-        data[i].mentions = 0
-        symbolMap.set(data[i].symbol, data[i])}
-    }
-    console.log(symbolMap.get('ETH'))
+   function mySorter(a, b) {
+    return parseFloat(b.market_cap_dominance) - parseFloat(a.market_cap_dominance)
+   }
+   const d2 = data.sort((a,b) => parseFloat(b.quote.USD.percent_change_24h) - parseFloat(a.quote.USD.percent_change_24h))
+
+   let d3 = [];
+   for(let i = 0; i < 25; i++){
+       d3[i] = d2[i]
+       console.log(d2[i].symbol + " " + parseFloat(d2[i].quote.USD.percent_change_24h))
+   }
+   console.log(d3.length)
+    // for(let i = 0; i < data.length; i++){
+    //     if(symbolMap.get(data[i]) != undefined){
+    //         console.log("dupe")
+    //     }
+    //     else{ 
+    //     data[i].mentions = 0
+    //     symbolMap.set(data[i].symbol, data[i])}
+    // }
+    // console.log(symbolMap.get('ETH'))
     
  
          
@@ -91,7 +101,7 @@ export const getData = async (req, res) => {
 
     try {
         console.log(output)
-        res.send('working:\n' + output)
+        res.send(d3)
         
     } catch (error) {
         
