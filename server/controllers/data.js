@@ -3,6 +3,10 @@ import dotenv from 'dotenv'
 import rp from 'request-promise'
 import fs from 'fs'
  
+import fetch from 'node-fetch'; 
+import { readFile } from 'fs/promises';
+
+
  
 export const getData = (req, res) => {
     dotenv.config();
@@ -32,8 +36,19 @@ export const getData = (req, res) => {
     //   console.log('API call error:', err.message);
     // });
 
+   
     
+    fs.readFile('./cryptoMap.json', 'utf8', (err, jsonString) => {
+        if (err) {
+            console.log("File read failed:", err)
+            return
+        }
+        console.log("Parsing");
+        const pairs = JSON.parse(jsonString);
+        console.log(pairs);
+    })
     
+
     var T = new Twit({
         consumer_key:         '...',
         consumer_secret:      '...',
