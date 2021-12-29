@@ -13,9 +13,9 @@ const Coins = () => {
  
 
 const columns = [
-  { field: 'id', headerName:'id', width: 30}, 
-  { field: 'rank', headerName: '#', width: 70 },
+  { field: 'id', headerName:'#', width: 30}, 
   { field: 'name', headerName: 'Name', width: 130 },
+  { field: 'symb', headerName: 'Symbol', width: 70 },
   { field: 'price', headerName: 'Price', width: 200 },
   {
     field: 'dayChange',
@@ -27,7 +27,7 @@ const columns = [
 let rows = [];
 
 if(coins.length){
-  coins.map((coin) => {rows.push({ id: coin.id, rank: coin.id + 2, name: coin.name, price: coin.quote.USD.price, dayChange: coin.quote.USD.percent_change_24h})} );
+  coins.map((coin) => {rows.push({ id: coin.id, rank: coin.id + 2, name: coin.name, symb: coin.symbol, price: coin.quote.USD.price, dayChange: coin.quote.USD.percent_change_24h})} );
 }
  
 
@@ -37,7 +37,7 @@ if(coins.length){
       <DataGrid
         rows={rows}
         columns={columns}
-        pageSize={100}
+        autoPageSize={true}
         rowsPerPageOptions={[100]}
  
       />

@@ -146,21 +146,21 @@ export async function getTweets(data) {
     
     // const homeTimeline = await twitterClient.v2.search('BTC OR ETH', { max_results: 10 });
     
-    for(let i = 0; i < 15; i++){
-        var symbol = data[i].symbol
+    // for(let i = 0; i < 15; i++){
+    //     var symbol = data[i].symbol
 
-        if(symbol.includes('$')){
+    //     if(symbol.includes('$')){
             
-            symbol = symbol.replace('$',"")
+    //         symbol = symbol.replace('$',"")
  
-        }
+    //     }
  
-        const currentCoin = await twitterClient.v2.tweetCountRecent("(" + symbol + " OR " + data[i].name + ")" + " (coin OR token OR #cryptocurrency) -is:retweet", { granularity: 'day', start_time: yesterdayUTC})
-        console.log(data[i].symbol + ": " + currentCoin.data[0].tweet_count)
-        data[i].mentions = currentCoin.data[0].tweet_count
+    //     const currentCoin = await twitterClient.v2.tweetCountRecent("(" + symbol + " OR " + data[i].name + ")" + " (coin OR token OR #cryptocurrency) -is:retweet", { granularity: 'day', start_time: yesterdayUTC})
+    //     console.log(data[i].symbol + ": " + currentCoin.data[0].tweet_count)
+    //     data[i].mentions = currentCoin.data[0].tweet_count
  
 
-    }
+    // }
     
  
 
