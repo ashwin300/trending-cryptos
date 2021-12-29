@@ -63,12 +63,12 @@ export const getData = async (req, res) => {
    function mySorter(a, b) {
     return parseFloat(b.market_cap_dominance) - parseFloat(a.market_cap_dominance)
    }
-   const d2 = data.sort((a,b) => parseFloat(b.quote.USD.percent_change_24h) - parseFloat(a.quote.USD.percent_change_24h))
+   const d2 = data.sort((a,b) => parseFloat(b.quote.USD.market_cap_dominance) - parseFloat(a.quote.USD.market_cap_dominance))
 
    let d3 = [];
    for(let i = 0; i < 25; i++){
        d3[i] = d2[i]
-       console.log(d2[i].symbol + " " + parseFloat(d2[i].quote.USD.percent_change_24h))
+       console.log(d2[i].symbol + " " + parseFloat(d2[i].quote.USD.market_cap_dominance))
    }
    console.log(d3.length)
     // for(let i = 0; i < data.length; i++){
@@ -83,7 +83,7 @@ export const getData = async (req, res) => {
     
  
          
-    getTweets()
+    await getTweets(d3)
 
    
     
@@ -102,7 +102,7 @@ export const getData = async (req, res) => {
 
 }
  
-export async function getTweets() {
+export async function getTweets(data) {
  
     const twtApi = process.env.twtAPI;
     const twtApiSecret = process.env.twtAPISECRET;
@@ -140,11 +140,28 @@ export async function getTweets() {
     const yesterday = today
     yesterday.setDate(today.getDate() - 1)
 
+    const yesterdayUTC = yesterday.toISOString()
+
     
     
     // const homeTimeline = await twitterClient.v2.search('BTC OR ETH', { max_results: 10 });
-    // const numm = await twitterClient.v2.tweetCountRecent('BTC', { granularity: 'day' })
-    // console.log(numm.data[0].tweet_count)
+    
+    for(let i = 0; i < 15; i++){
+        var symbol = data[i].symbol
+
+        if(symbol.includes('$')){
+            
+            symbol = symbol.replace('$',"")
+ 
+        }
+ 
+        const currentCoin = await twitterClient.v2.tweetCountRecent("(" + symbol + " OR " + data[i].name + ")" + " (coin OR token OR #cryptocurrency) -is:retweet", { granularity: 'day', start_time: yesterdayUTC})
+        console.log(data[i].symbol + ": " + currentCoin.data[0].tweet_count)
+        data[i].mentions = currentCoin.data[0].tweet_count
+ 
+
+    }
+    
  
 
   
@@ -156,3 +173,25 @@ export async function getTweets() {
 
 
 }
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(ms, resolve));
+  }
+  
+  async function autoRetryOnRateLimitError(callback, promise) {
+    while (true) {
+      try {
+        return await callback;
+      } catch (error) {
+        if (error instanceof ApiResponseError && error.rateLimitError && error.rateLimit) {
+          const resetTimeout = error.rateLimit.reset * 1000; // convert to ms time instead of seconds time
+          const timeToWait = resetTimeout - Date.now();
+            console.log("rate limit hit..")
+          await sleep(timeToWait);
+          continue;
+        }
+  
+        throw error;
+      }
+    }
+  }
