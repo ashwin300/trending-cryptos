@@ -1,7 +1,7 @@
 import Twit from 'twit';
 import dotenv from 'dotenv';
 import rp from 'request-promise';
- 
+import TwitterApi from 'twitter-api-v2';
  
 import fetch from 'node-fetch'; 
 import { readFile } from 'fs/promises';
@@ -83,20 +83,13 @@ export const getData = async (req, res) => {
     
  
          
-    
+    getTweets()
 
    
     
  
 
-    var T = new Twit({
-        consumer_key:         '...',
-        consumer_secret:      '...',
-        access_token:         '...',
-        access_token_secret:  '...',
-        timeout_ms:           60*1000,  // optional HTTP request timeout to apply to all requests.
-        strictSSL:            true,     // optional - requires SSL certificates to be valid.
-      })
+
 
 
     try {
@@ -109,3 +102,57 @@ export const getData = async (req, res) => {
 
 }
  
+export async function getTweets() {
+ 
+    const twtApi = process.env.twtAPI;
+    const twtApiSecret = process.env.twtAPISECRET;
+    const twtAccessToken = process.env.twtToken;
+    const twtTokenSecret = process.env.twtTokenSecret;
+    
+    const bearer = process.env.bearer;
+ 
+    // var T = new Twit({
+    //     consumer_key:         twtApi,
+    //     consumer_secret:      twtApiSecret,
+    //     access_token:         twtAccessToken,
+    //     access_token_secret:  twtTokenSecret,
+    //     timeout_ms:           60*1000,  // optional HTTP request timeout to apply to all requests.
+    //     strictSSL:            true,     // optional - requires SSL certificates to be valid.
+    //   })
+
+    //   T.get('count/tweets', { q: 'BTC since:2011-07-11', count: 100 }, function(err, data, response) {
+    //     console.log(data)
+    //   })
+    // const twitterClient = new TwitterApi.TwitterApi(({
+    //     appKey: twtApi,
+    //     appSecret: twtApiSecret,
+    //     accessToken: twtAccessToken,
+    //     accessSecret: twtTokenSecret,
+    //   }));
+ 
+    const twitterClient = new TwitterApi.TwitterApi(bearer);
+
+ 
+    const today = new Date();
+    today.setHours(8)
+    today.setMinutes(30)
+    today.setSeconds(0)
+    const yesterday = today
+    yesterday.setDate(today.getDate() - 1)
+
+    
+    
+    // const homeTimeline = await twitterClient.v2.search('BTC OR ETH', { max_results: 10 });
+    // const numm = await twitterClient.v2.tweetCountRecent('BTC', { granularity: 'day' })
+    // console.log(numm.data[0].tweet_count)
+ 
+
+  
+  
+
+
+
+
+
+
+}
