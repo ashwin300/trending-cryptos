@@ -1,0 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Licorice&family=Open+Sans:wght@500&display=swap');
+body {
+    background-color: gray;
+  /* background-image: url('images/bg.jpg'); */
+  background-attachment: fixed;
+  background-size: cover;
+    margin: 0;
+ 
+   
+    
+ 
+  }
+  a {
+    color: black;
+    text-decoration: none;
+  }
+  a:visited {
+    color: lightgray;
+  }
+  
+  code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+      monospace;
+  }
