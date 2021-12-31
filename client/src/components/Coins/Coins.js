@@ -6,7 +6,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import PropTypes from 'prop-types';
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
- 
+import PercentChange from './PercentChange/PercentChange'
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -42,9 +42,59 @@ const columns = [
 ];
 
 let rows = [];
+function formatPrice(fPrice){
+  let formattedPrice;
+ 
+ 
+  
+  if(fPrice > 1.000){
+    
+    const infGreaterThan1 = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2, minimumFractionDigits: 2});
+    formattedPrice = infGreaterThan1.format(fPrice);
 
+  }
+  else if(fPrice < 1.000){
+    const infLessthan1 = new Intl.NumberFormat('en-US', { minimumSignificantDigits: 4, maximumSignificantDigits: 4 });
+    formattedPrice = infLessthan1.format(fPrice);
+
+  }
+  else{
+    const infLessthan1 = new Intl.NumberFormat('en-US', { minimumSignificantDigits: 3 });
+    formattedPrice = infLessthan1.format(fPrice);
+  }
+  return formattedPrice;
+  
+}
+
+function formatPercent(fPer){
+  let formattedPer;
+ 
+  console.log(fPer)
+  
+  if(fPer > 1.000){
+    
+    const infGreaterThan1 = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2, minimumFractionDigits: 2});
+    formattedPer = infGreaterThan1.format(fPer);
+
+  }
+  else if(fPer < 1.000){
+    const infLessthan1 = new Intl.NumberFormat('en-US', { minimumSignificantDigits: 2, maximumSignificantDigits: 2 });
+    formattedPer = infLessthan1.format(fPer);
+
+  }
+  else{
+    const infLessthan1 = new Intl.NumberFormat('en-US', { minimumSignificantDigits: 3 });
+    formattedPer = infLessthan1.format(fPer);
+  }
+  return formattedPer;
+  
+}
 if(coins.length){
-  coins.map((coin) => {rows.push({ id: coin.id, rank: coin.id + 2, name: coin.name, symb: coin.symbol, price: coin.quote.USD.price, dayChange: coin.quote.USD.percent_change_24h})} );
+
+  coins.map((coin) => {
+
+
+    rows.push({ id: coin.id, rank: coin.id + 2, name: coin.name, symb: coin.symbol, price: formatPrice(coin.quote.USD.price), dayChange: formatPercent(coin.quote.USD.percent_change_24h), weekChange: formatPercent(coin.quote.USD.percent_change_7d), mCap: coin.quote.USD.market_cap})} );
 }
 const headCells = [
   {
@@ -342,21 +392,27 @@ function EnhancedTable() {
                         {row.rank}
                       </TableCell>
                       <TableCell align="left">
+                       
                         <Grid
                         container
                         direction="row"
                         justifyContent="flex-start"
                         alignItems="center">
+                          
                           <Grid item>
-                          <Typography className={classes.coinNameText} fontFamily="Roboto" fontWeight={600} fontSize={22}>{row.name}</Typography>
+                          <a href="www.google.com">
+                          <Typography className={classes.coinNameText} fontFamily="Inter" fontWeight={600} fontSize={22}>{row.name}</Typography>
+                          </a>
                           </Grid>
                           <Grid item>&nbsp;&nbsp;</Grid>
                           <Grid item>
-                          <Typography className={classes.coinSymbText} fontFamily="Roboto" fontWeight={500} paddingTop="5px"> 
+                          <a href="www.google.com">
+                          <Typography className={classes.coinSymbText} fontFamily="Inter" fontWeight={600} paddingTop="02px"> 
                           {row.symb}
                           </Typography>
+                          </a>
                           </Grid>
-
+                          
                         
                         
                            
@@ -364,11 +420,14 @@ function EnhancedTable() {
                         
                         
                         </Grid> 
+                      
                       </TableCell>
-                      <TableCell align="right">{row.price}</TableCell>
-                      <TableCell align="right">{row.dayChange}</TableCell>
-                      <TableCell align="right">52522</TableCell>
-                      <TableCell align="right">52522</TableCell>
+                      <TableCell align="right">
+                      <Typography fontFamily="Inter" fontWeight={600} fontSize={18}>${row.price}</Typography>
+                      </TableCell>
+                      <TableCell align="right"><PercentChange num={row.dayChange} /></TableCell>
+                      <TableCell align="right"><PercentChange num={row.weekChange} /></TableCell>
+                      <TableCell align="right">{row.mCap}</TableCell>
                     </TableRow>
                   );
                 })}
